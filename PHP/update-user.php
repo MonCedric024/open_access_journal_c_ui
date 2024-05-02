@@ -17,8 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $bio = $_POST['bio'];
     $birthdate = $_POST['birthdate'];
     $expertiseData = isset($_POST['expertiseData']) ? $_POST['expertiseData'] : '';
+    $phone_number = $_POST['phone_number'];
 
-    $sqlUpdateUserInfo = "UPDATE author SET first_name = :first_name, affix = :affix, middle_name = :middle_name, last_name = :last_name, birth_date = :birth_date, gender = :gender, marital_status = :marital_status, country = :country, afiliations = :afiliations, bio = :bio, position = :position, field_of_expertise = :field_of_expertise,orc_id = :orc_id WHERE author_id = :author_id";
+    $sqlUpdateUserInfo = "UPDATE author SET first_name = :first_name, affix = :affix, middle_name = :middle_name, last_name = :last_name, birth_date = :birth_date, gender = :gender, phone_number =:phone_number, marital_status = :marital_status, country = :country, afiliations = :afiliations, bio = :bio, position = :position, field_of_expertise = :field_of_expertise,orc_id = :orc_id WHERE author_id = :author_id";
     $sqlArray = array(
         'first_name' => $firstName,
         'affix' => $affix,
@@ -26,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         'last_name' => $lastName,
         'birth_date' => $birthdate,
         'gender' => $gender,
+        'phone_number' => $phone_number,
         'marital_status' => $status,
         'country' => $country,
         'afiliations' => $affiliation,

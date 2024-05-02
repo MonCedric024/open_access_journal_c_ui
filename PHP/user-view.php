@@ -501,16 +501,16 @@ $orcid = isset($_GET['orcid']) ? $_GET['orcid'] : '';
                                 }
                             ?>
                         </span></p>
-						<p><span class="label">Gender:</span> <span id="genderLabel">
+						<p><span class="label">Phone Number:</span> <span id="genderLabel">
                         <?php 
                 
-                            $result = database_run("SELECT gender, public_private_profile FROM author WHERE orc_id = :orc_id", array('orc_id' => $orcid));
+                            $result = database_run("SELECT phone_number, public_private_profile FROM author WHERE orc_id = :orc_id", array('orc_id' => $orcid));
                             
                             if ($result !== false && !empty($result)) {
-                                $gender = $result[0]->gender;
-                                $genderStats = $result[0]->public_private_profile ;
-                                if ($genderStats == 0){
-                                    echo $gender;
+                                $phone_number = $result[0]->phone_number;
+                                $phone_numberStats = $result[0]->public_private_profile ;
+                                if ($phone_numberStats == 0){
+                                    echo $phone_number;
                                 }else{
                                     echo '';
                                 }

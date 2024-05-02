@@ -133,7 +133,7 @@ $expertise = $_SESSION['expertise'];
 								<h1>
 								<?php
 									if (isset($_SESSION['LOGGED_IN']) && $_SESSION['LOGGED_IN'] === true) {
-										$sqlSelectName = "SELECT first_name, middle_name, last_name, affix, birth_date, gender, marital_status, country, orc_id, afiliations, position, bio, field_of_expertise FROM author WHERE author_id = :author_id";
+										$sqlSelectName = "SELECT first_name, middle_name, last_name, affix, birth_date, gender, phone_number, marital_status, country, orc_id, afiliations, position, bio, field_of_expertise FROM author WHERE author_id = :author_id";
 										$result = database_run($sqlSelectName, array(':author_id' => $id));
 
 										if ($result) {
@@ -145,6 +145,7 @@ $expertise = $_SESSION['expertise'];
 												$affix = $user->affix;
 												$birthDate = $user->birth_date;
 												$gender = $user->gender;
+												$phone_number = $user->phone_number;
 												$maritalStatus = $user->marital_status;
 												$country = $user->country;
 												$orcId = $user->orc_id;
@@ -153,7 +154,7 @@ $expertise = $_SESSION['expertise'];
 												$bio = $user->bio;
 												$field_of_expertise = $user->field_of_expertise;
 
-												$profileFields = array($firstName, $lastName, $birthDate, $gender, $maritalStatus, $country, $orcId, $afiliations, $position, $field_of_expertise);
+												$profileFields = array($firstName, $lastName, $birthDate, $gender, $phone_number, $maritalStatus, $country, $orcId, $afiliations, $position, $field_of_expertise);
 												$completedFields = count(array_filter($profileFields, function($field) { return !empty($field); }));
 												$totalFields = count($profileFields);
 
@@ -378,10 +379,10 @@ $expertise = $_SESSION['expertise'];
 						}
 						?>
 					</span></p>
-					<p><span class="label">Gender</span> <span id="genderLabel">
+					<p><span class="label">Phone Number: </span> <span id="genderLabel">
 					<?php
 						if (isset($_SESSION['LOGGED_IN']) && $_SESSION['LOGGED_IN'] === true) {
-							$sqlSelectName = "SELECT gender FROM author WHERE author_id = :author_id";
+							$sqlSelectName = "SELECT phone_number FROM author WHERE author_id = :author_id";
 						
 							$result = database_run($sqlSelectName, array(':author_id' => $id));
 
@@ -389,9 +390,9 @@ $expertise = $_SESSION['expertise'];
 								
 								if (count($result) > 0) {
 									$user = $result[0];
-									$gender = $user->gender;
+									$phone_number = $user->phone_number;
 								
-									echo $gender;
+									echo $phone_number;
 								
 									
 					
@@ -725,6 +726,37 @@ $expertise = $_SESSION['expertise'];
 								<!-- <label for="country">Country: <span class="requiredFilled" style="color: red">*</span></label> -->
 								<select id="country" name="country" class="dropdown-box" required>
 								</select>
+							</div>
+							<div class="form-row">
+								
+								<label for="phone_number">Phone Number: </label>
+								<?php
+								
+									$sqlSelectName = "SELECT phone_number FROM author WHERE author_id = :author_id";
+								
+									$result = database_run($sqlSelectName, array(':author_id' => $id));
+
+									if ($result) {
+										
+										if (count($result) > 0) {
+											$user = $result[0];
+											$phone_number = $user->phone_number;
+										
+											echo '<input type="text" id="phone_number" name="phone_number" maxlength="11" class="text-box"
+											value="' . $phone_number . '">';
+										
+											
+							
+										} else {
+											echo "User not found.";
+										}
+									} else {
+										echo '<input type="text" id="phone_number" name="phone_number" maxlength="11" class="text-box">';
+									}
+								
+								?>
+								
+							
 							</div>
 						</div>
 						<!-- Add similar fields for Middle name, Last Name, Affix, Birth date, gender, status, country -->
@@ -2535,7 +2567,6 @@ $(document).ready(function () {
 
 
 
-	
 </script>
 
 <div class="footer" id="footer">

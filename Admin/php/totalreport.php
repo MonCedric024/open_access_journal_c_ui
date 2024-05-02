@@ -1,11 +1,15 @@
 <?php
 include 'function/redirect.php';
 include 'function/report_function.php';
+include 'function/submission_functions.php';
 
 $yearval = isset($_GET['y']) ? $_GET['y'] : date('Y');
+$journal_id = 0;
 
 $counterlist = get_counter_list($yearval);
 $totalreport = get_totalreportforgraph($yearval);
+$journal_list = get_journal_list($journal_id);
+
 $seriesData = [
     'read' => ['name' => 'view', 'data' => array_fill(0, 12, 0)],
     'downloaded' => ['name' => 'downloaded', 'data' => array_fill(0, 12, 0)],
@@ -54,6 +58,9 @@ $seriesString = json_encode($seriesData);
     }
     #totalPublished {
         color: #566A7F !important;
+    }
+    .nav-tabs .nav-item .nav-link.active {
+        color: #ffffff;
     }
 </style>
 <body>
@@ -118,12 +125,26 @@ $seriesString = json_encode($seriesData);
             </div>
         </div>
 
+        <!-- Journal tabs -->
+        <ul class="nav nav-tabs mb-3" id="journalTabs">
+            <li class="nav-item">
+                <a class="nav-link active" id="tabAll" data-status="">All</a>
+            </li>
+
+            <?php foreach ($journal_list as $journal): ?>
+                <li class="nav-item">
+                    <a class="nav-link" id="tab<?php echo $journal->journal_id; ?>" data-status="<?php echo $journal->journal; ?>"><?php echo $journal->journal; ?></a>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+
         <div class="card">
             <div class="table-responsive text-nowrap" id="nopadding">
                 <table class="table table-striped" id="DataTable">
                     <thead>
                         <tr>
                             <th>Article ID</th>
+                            <th>Hide</th>
                             <th>Title</th>
                             <th>View</th>
                             <th>Download</th>
@@ -138,7 +159,17 @@ $seriesString = json_encode($seriesData);
                                 ?>
                                 <tr data-toggle="modal" data-target="">
                                     <td width="5%"><?php echo $counterlistval->article_id; ?></td>
-                                    <td width="75%"><?php echo $counterlistval->title; ?></td>
+                                    <?php
+                                    $matchingJournal = null;
+                                    foreach ($journal_list as $journal) {
+                                        if ($journal->journal_id == $counterlistval->journal_id) {
+                                            $matchingJournal = $journal;
+                                            break;
+                                        }
+                                    }
+                                    ?>
+                                    <td width="5%"><?php echo ($matchingJournal !== null) ? $matchingJournal->journal : 'Unknown'; ?></td>
+                                    <td width="70%"><?php echo $counterlistval->title; ?></td>
                                     <td width="5%"><?php echo $counterlistval->read_count; ?></td>
                                     <td width="5%"><?php echo $counterlistval->download_count; ?></td>
                                     <td width="5%"><?php echo $counterlistval->citation_count; ?></td>
@@ -196,8 +227,17 @@ $seriesString = json_encode($seriesData);
     <!-- DataTables initialization script -->
     <script>
         $(document).ready(function () {
-            $('#DataTable').DataTable({
+            var dataTable = $('#DataTable').DataTable({
                 "order": [[2, "desc"]] 
+            });
+
+            $('#journalTabs').on('click', 'a', function (e) {
+                e.preventDefault();
+                $('#journalTabs a').removeClass('active');
+                $(this).addClass('active');
+                var statusValue = $(this).data('status');
+
+                dataTable.column(1).search(statusValue).draw();
             });
         });
 
@@ -209,16 +249,36 @@ $seriesString = json_encode($seriesData);
         }
 
         function exportToExcel() {
+            var activeStatus = $('#journalTabs a.active').data('status'); 
+
             var dataTable = $('#DataTable').DataTable();
-            var data = dataTable.rows().data();
+            var data = dataTable.rows().data().toArray();
 
-            var wsData = data.toArray().map(row => [row[0], row[1], row[2], row[3], row[4], row[5]]);
+            if (activeStatus.toLowerCase() === "") {
+                var wsData = data.map(row => [row[0], row[1], row[2], row[3], row[4], row[5]]);
+            } else {
+                var filteredData = data.filter(row => row[1] === activeStatus);
+                var wsData = filteredData.map(row => [row[0], row[1], row[2], row[3], row[4], row[5]]);
+            }
 
-            var ws = XLSX.utils.aoa_to_sheet([["Article ID", "Title", "View", "Download", "Citation", "Support"]].concat(wsData));
+            var yearval = <?php echo json_encode($yearval); ?>;
+            var currentDate = new Date().toLocaleString("en-US", {timeZone: "Asia/Manila"});
+            var formattedDate = new Date(currentDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-            var columnSizes = [{ wch: 15 }, { wch: 150 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 }]; 
+            if (activeStatus == ""){
+                var title = "Article Report " + activeStatus + " - " + formattedDate;
+            } else{
+                var title = "Article Report for " + activeStatus + " - " + formattedDate;
+            }
+
+            var ws = XLSX.utils.aoa_to_sheet([[title], ["Article ID", "Journal", "Title", "View", "Download", "Citation", "Support"]].concat(wsData));
+
+            ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 5 } }];
+
+            ws['!cols'] = [{ wpx: 15 * 6 }]
+
+            var columnSizes = [{ wch: 15 }, { wch: 15 },{ wch: 150 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 }]; 
             columnSizes.forEach((size, columnIndex) => {
-                ws['!cols'] = ws['!cols'] || [];
                 ws['!cols'][columnIndex] = size;
             });
 
@@ -226,27 +286,10 @@ $seriesString = json_encode($seriesData);
 
             var wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-
-            var yearval = <?php echo json_encode($yearval); ?>;
-            var filename = 'ArticleCounter' + yearval + '.xlsx';
+            
+            var filename = 'ArticleCounter ' + activeStatus + " - " + formattedDate + '.xlsx';
             XLSX.writeFile(wb, filename);
         }
-
-        // function exportToPDF() {
-        //     var dataTable = $('#DataTable').DataTable();
-        //     var data = dataTable.rows().data();
-
-        //     var wsData = data.toArray().map(row => [row[0], row[1], row[2], row[3]]);
-
-        //     var doc = new jsPDF();
-        //     doc.autoTable({ 
-        //         head: [["Article ID", "Title", "Read", "Download"]],
-        //         body: wsData
-        //     });
-        //     var yearval = <?php echo json_encode($yearval); ?>;
-        //     var pdfFilename = 'ArticleCounter' + yearval + '.pdf';
-        //     doc.save(pdfFilename);
-        // }
 
         (function() {
             let cardColor, headingColor, axisColor, shadeColor, borderColor;

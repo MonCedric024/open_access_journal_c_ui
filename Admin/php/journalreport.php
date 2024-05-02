@@ -353,12 +353,32 @@ foreach ($journal_list as $journal) {
         }
 
         function exportToExcel() {
+            var activeStatus = $('#journalTabs a.active').data('status'); 
+
             var dataTable = $('#DataTable').DataTable();
-            var data = dataTable.rows().data();
+            var data = dataTable.rows().data().toArray();
 
-            var wsData = data.toArray().map(row => [row[0], row[1], row[2],  getStatusText(row[3]), row[4]]);
+            if (activeStatus.toLowerCase() === "") {
+                var wsData = data.map(row => [row[0], row[1], row[2], getStatusText(row[3]), row[4]]);
+            } else {
+                var filteredData = data.filter(row => row[1] === activeStatus);
+                var wsData = filteredData.map(row => [row[0], row[1], row[2], getStatusText(row[3]), row[4]]);
+            }
 
-            var ws = XLSX.utils.aoa_to_sheet([["Article ID", "Journal", "Title", "Status", "Added"]].concat(wsData));
+            var currentDate = new Date().toLocaleString("en-US", {timeZone: "Asia/Manila"});
+            var formattedDate = new Date(currentDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+            if (activeStatus == ""){
+                var title = "Journal Report " + activeStatus + " - " + formattedDate;
+            } else{
+                var title = "Journal Report for " + activeStatus + " - " + formattedDate;
+            }
+
+            var ws = XLSX.utils.aoa_to_sheet([[title], ["Article ID", "Journal", "Title", "Status", "Added"]].concat(wsData));
+
+            ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }];
+
+            ws['!cols'] = [{ wpx: 15 * 5 }];
 
             var columnSizes = [{ wch: 15 },{ wch: 25 }, { wch: 150 }, { wch: 25 }, { wch: 25 }]; 
             columnSizes.forEach((size, columnIndex) => {
@@ -370,8 +390,8 @@ foreach ($journal_list as $journal) {
 
             var wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-
-            var filename = 'JournalReport.xlsx';
+            
+            var filename = 'JournalReport ' + activeStatus + " - " + formattedDate + '.xlsx';
             XLSX.writeFile(wb, filename);
         }
 
