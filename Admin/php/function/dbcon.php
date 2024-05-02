@@ -3,11 +3,11 @@ if (!function_exists('connect_to_database')) {
     function connect_to_database()
     {
         // $string = "mysql:host=srv1320.hstgr.io;dbname=u277379385_qcuj2024";
-        // $string = "mysql:host=localhost;dbname=u277379385_qcuj2024";
-        // $con = new PDO($string, 'u277379385_qcuj2024', 'Qcujournal1234.');
+        $string = "mysql:host=localhost;dbname=u277379385_qcuj2024";
+        $con = new PDO($string, 'u277379385_qcuj2024', 'Qcujournal1234.');
 
-        $string = "mysql:host=localhost;dbname=journal";
-        $con = new PDO($string, 'root', '');
+        // $string = "mysql:host=localhost;dbname=journal";
+        // $con = new PDO($string, 'root', '');
 
         if (!$con) {
             return false;
