@@ -273,23 +273,21 @@ $id = $_SESSION['id'];
                                             $user_id = $row->userId;
 
                                             if($user_id !== $id){
-                                                echo '<p style="width: 40%;
+                                                echo '<div style="width: 50%;
                                                 background-color: #F2F3F4;
-                                                border-radius: 10px; padding-left: 5px">' . $messageFrom . '</p>';
-                                                echo '<p style="background-color: #F2F3F4;
-                                                width: 20%;
-                                                border-radius: 10px;
-                                                padding-left: 5px;">' . $messageSubject . '</p>';
-                                                echo '<p style="background-color: #F2F3F4;
-                                                width: 60%;
-                                                border-radius: 10px;
-                                                padding-left: 5px;">' . $messageContent . '</p>';
+                                                border-radius: 10px; padding-left: 5px">';
+                                                echo '<p style="margin-bottom: 0px">' . $messageFrom . '</p>';
+                                                echo '<p style="margin-bottom: 0px">' . $messageSubject . '</p>';
+                                                echo '<p style="margin-bottom: 0px">' . $messageContent . '</p>';
+                                                echo '</div>';
                                             }else{
                                                 echo '<p style="background-color: #F2F3F4;
-                                                width: 60%;
+                                                width: 50%;
                                                 border-radius: 10px;
                                                 padding-left: 5px;
-                                                float: right;">' . $messageContent . '</p>';
+                                                /* float: right; */
+                                                margin-top: 20px;
+                                                margin-left: auto;">' . $messageContent . '</p>';
                                             }
 
                                         

@@ -2077,7 +2077,7 @@ table {
 
     </script>
     <script>
-   const uploadButton = $('#addReviewer');
+    const uploadButton = $('#addReviewer');
     const articleID = <?php echo $article_data[0]->article_id; ?>;
     let isFirstModalOpen = true; 
 
@@ -2167,9 +2167,28 @@ table {
                         tbodySuggested.append(row);
                     }
                 }
+                
             });
 
             $('#sloading').toggle();
+            
+        if (!$.fn.DataTable.isDataTable('#DataTableSuggested')) {
+            $('#DataTableSuggested').DataTable({
+                "paging": false,
+                "ordering": false,
+                "searching": true,
+                "info": false
+            });
+        }
+
+        if (!$.fn.DataTable.isDataTable('#DataTableOther')) {
+            $('#DataTableOther').DataTable({
+                "paging": false,
+                "ordering": false,
+                "searching": true,
+                "info": false
+            });
+        }
 
         } catch (error) {
             console.error('Error:', error);
@@ -2181,26 +2200,7 @@ table {
         fetchAndRenderData(sortValue);
     });
 
-    // Run fetchAndRenderData when the page initially loads
     fetchAndRenderData('score');
-
-    if (!$.fn.DataTable.isDataTable('#DataTableSuggested')) {
-        $('#DataTableSuggested').DataTable({
-            "paging": false,
-            "ordering": false,
-            "searching": true,
-            "info": false
-        });
-    }
-
-    if (!$.fn.DataTable.isDataTable('#DataTableOther')) {
-        $('#DataTableOther').DataTable({
-            "paging": false,
-            "ordering": false,
-            "searching": true,
-            "info": false
-        });
-    }
     </script>
 </body>
 </html>
