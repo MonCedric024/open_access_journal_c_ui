@@ -10,19 +10,43 @@ if (!isset($_SESSION['LOGGED_IN']) || $_SESSION['LOGGED_IN'] !== true) {
 $userId = $_SESSION['id'];
 $articleId = isset($_GET['id']) ? $_GET['id'] : null;
 
-$sqlCheckArticle = "SELECT reviewer_assigned.article_id, reviewer_assigned.author_id FROM reviewer_assigned JOIN article ON reviewer_assigned.article_id = article.article_id WHERE reviewer_assigned.author_id = :author_id AND reviewer_assigned.article_id = :article_id AND reviewer_assigned.answer = 1 AND reviewer_assigned.accept = 1";
+date_default_timezone_set('Asia/Manila');
+
+$sqlCheckArticle = "SELECT * FROM reviewer_assigned JOIN article ON reviewer_assigned.article_id = article.article_id WHERE reviewer_assigned.author_id = :author_id AND reviewer_assigned.article_id = :article_id";
 
 $params = array('author_id' => $userId, 'article_id' => $articleId);
 
 $result = database_run($sqlCheckArticle, $params);
 
-if ($result !== false && !empty($result)) {
-    // Escape the apostrophe in "You've" using a backslash (\)
-    echo "<script>alert('You\'ve answered this article already');</script>";
-    echo "<script>window.location.href = './index.php';</script>";
-    exit(); // Ensure script execution stops here
-} 
+if ($result !== false) {
+    
+    foreach($result as $row){
+        $created = date('Y-m-d', strtotime($row->date_issued));
+        $deadline = $row->deadline;
+        $answered = $row->answer;
+        $currentDate = date('Y-m-d'); // Ensure currentDate only contains date portion
+    
+        if ($currentDate > $created && $answered == '1') {
+            echo "<script>alert('Overdue Invitation or You have already responded to this article');</script>";
+            echo "<script>window.location.href = './index.php';</script>";
+        } elseif ($currentDate > $created && $deadline !== null && $currentDate > $deadline) {
+            echo "<script>alert('Overdue Invitation');</script>";
+            echo "<script>window.location.href = './index.php';</script>";
+        } elseif ($answered == '1') {
+            echo "<script>alert('You have already responded to this article');</script>";
+            echo "<script>window.location.href = './index.php';</script>";
+        }
+    }
+    
+   
+} else {
+    echo "You are uninvited to this article";
+}
+
+
+ 
 ?>
+
 
 
 <!DOCTYPE html>
