@@ -620,11 +620,11 @@ function sendEmailAssignReviewer()
 
 function assignReviewer($articleid, $reviewerid, $round)
 {
-    $deadline = date('Y-m-d H:i:s', strtotime('+1 week'));
+    $date_issued = date('Y-m-d H:i:s', strtotime('+1 week'));
 
-    $query = "INSERT INTO reviewer_assigned (article_id, author_id, round, deadline) VALUES (?, ?, ?, ?)";
+    $query = "INSERT INTO reviewer_assigned (article_id, author_id, round, date_issued) VALUES (?, ?, ?, ?)";
 
-    $result = execute_query($query, [$articleid, $reviewerid, $round, $deadline], true);
+    $result = execute_query($query, [$articleid, $reviewerid, $round, $date_issued], true);
 
     if ($result !== false) {
         echo json_encode(['status' => true, 'message' => 'Record added successfully']);

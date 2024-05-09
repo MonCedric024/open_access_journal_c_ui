@@ -1758,7 +1758,7 @@ table {
             var decisionText = <?php echo json_encode($reviewer_email[0]->decision); ?>;
             var decisionText1 = "Title";
             var decisionText2 = "Abstract";
-            var decisionText3 = "The review itself is due on" + formattedDate;
+            var decisionText3 = "The review acceptance deadline is" + formattedDate;
             var urlText = "Submission URL:";
 
             if (emailContent.trim() !== '') {
