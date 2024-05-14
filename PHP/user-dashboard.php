@@ -2019,7 +2019,7 @@ $expertise = $_SESSION['expertise'];
 margin-right: auto; padding: 0; background-color: red;">
     <div class="cert-container d-flex justify-content-center align-items-center">
 		<?php 
-			echo '<img class="imgCert" id="cert1" src="../images/qcuj-reviewer-certificate.png" alt="cert">'
+			echo '<img class="imgCert" id="cert1" src="../images/qcuj-reviewer-cert.png" alt="cert">'
 		?>
         
 		<div class="cert-category">
@@ -2046,7 +2046,7 @@ margin-right: auto; padding: 0; background-color: red;">
 <div class="container-fluid mt-5" id="certPublishedHead" style="display: none; align-items: center !important; width: 889px; height: 500px; margin-left: auto;
 margin-right: auto; padding: 0;">
     <div class="cert-container d-flex justify-content-center align-items-center">
-        <img class="imgCert" id="cert2" src="../images/qcuj-publication-certificate.png" alt="cert">
+        <img class="imgCert" id="cert2" src="../images/qcuj-publication-cert.png" alt="cert">
 
 			<div class="articlePubInfo">
 				<p class="h2" id="categoryPublished"></p>
@@ -2447,26 +2447,34 @@ function updateEngagementTitle(title, journalId, formattedDateTime) {
 	const iss1 = document.getElementById('iss1');
 	const iss2 = document.getElementById('iss2');
     document.getElementById("engagementTitle").innerHTML = title;
-    document.getElementById("category").innerHTML = 'Journal of ' + journalId;
+    document.getElementById("category").innerHTML = journalId;
 	document.getElementById("publishdate").innerHTML = formattedDateTime;
 	document.getElementById("revDate").innerHTML = formattedDateTime;
 
 	document.getElementById("engagementTitlePublished").innerHTML = title;
-    document.getElementById("categoryPublished").innerHTML = 'Journal of ' + journalId;
+    document.getElementById("categoryPublished").innerHTML = journalId;
 	
-	if (document.getElementById("category").innerHTML === 'Journal of The Gavel') {
+	category.style.color = 'white';
+	if (document.getElementById("category").innerHTML === 'The Gavel') {
+        category.style.textShadow = '0 0 5px red, 0 0 10px red, 0 0 15px red, 0 0 20px red';
 		iss1.innerHTML = 'ISSN 3027-9895';
-	} else if (document.getElementById("category").innerHTML === 'Journal of The Lamp') {
+	} else if (document.getElementById("category").innerHTML === 'The Lamp') {
+        category.style.textShadow = '0 0 5px yellow, 0 0 10px yellow, 0 0 15px yellow, 0 0 20px yellow';
 		iss1.innerHTML = 'ISSN 2984-8369';
-	} else if (document.getElementById("category").innerHTML === 'Journal of The Star') {
+	} else if (document.getElementById("category").innerHTML === 'The Star') {
+        category.style.textShadow = '0 0 5px blue, 0 0 10px blue, 0 0 15px blue, 0 0 20px blue';
 		iss1.innerHTML = 'ISSN 3027-9895';
 	}
 
-	if (document.getElementById("categoryPublished").innerHTML === 'Journal of The Gavel') {
+	categoryPublished.style.color = 'white';
+	if (document.getElementById("categoryPublished").innerHTML === 'The Gavel') {
+        categoryPublished.style.textShadow = '0 0 5px red, 0 0 10px red, 0 0 15px red, 0 0 20px red';
 		iss2.innerHTML = 'ISSN 3027-9895';
-	} else if (document.getElementById("categoryPublished").innerHTML === 'Journal of The Lamp') {
+	} else if (document.getElementById("categoryPublished").innerHTML === 'The Lamp') {
+        categoryPublished.style.textShadow = '0 0 5px yellow, 0 0 10px yellow, 0 0 15px yellow, 0 0 20px yellow';
 		iss2.innerHTML = 'ISSN 2984-8369';
-	} else if (document.getElementById("categoryPublished").innerHTML === 'Journal of The Star') {
+	} else if (document.getElementById("categoryPublished").innerHTML === 'The Star') {
+        categoryPublished.style.textShadow = '0 0 5px blue, 0 0 10px blue, 0 0 15px blue, 0 0 20px blue';
 		iss2.innerHTML = 'ISSN 3027-9895';
 	}	
 }
